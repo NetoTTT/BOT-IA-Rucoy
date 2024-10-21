@@ -1,0 +1,63 @@
+dog
+person
+cat
+tv
+car
+meatballs
+marinara sauce
+tomato soup
+chicken noodle soup
+french onion soup
+chicken breast
+ribs
+pulled pork
+hamburger
+cavity
+life
+mana
+xp
+self
+escada
+muro
+atk1
+potMana
+potLife
+chat
+melee
+distance
+magic
+estado
+mapa
+msg
+amigos
+session
+config
+emulador
+sangue
+lago
+drow125
+drow120
+arvore
+stats
+voltar
+restart
+tempoSession
+xpLv
+xpMelee
+xpDistance
+xpMagic
+xpDefense
+local
+server
+guild
+send
+dropPotMana2
+servers
+conta
+skell90
+arvores
+skell80
+atk2
+flechas
+potManaw
+skell75

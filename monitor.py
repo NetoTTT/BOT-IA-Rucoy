@@ -7,6 +7,8 @@ import subprocess  # Importar subprocess para executar outro script
 import os  # Importar os para encerrar o processo
 import sys  # Importar sys para encerramento mais suave
 import keyboard  # Biblioteca para detectar pressionamento de teclas
+from ultralytics import YOLO
+from collections import defaultdict
 
 # Função para ler os dados da janela do arquivo .json
 def carregar_dados_janela():
@@ -55,9 +57,47 @@ def salvar_captura_numerada(tela):
 # Carregar dados da janela
 janela_selecionada = carregar_dados_janela()
 
+# Inicializar o modelo YOLO
+model = YOLO("best.pt")  # ou o caminho para seu modelo treinado
+track_history = defaultdict(lambda: [])
+seguir = True
+deixar_rastro = False
+
 # Loop principal para capturar e exibir a tela
 while True:
+    # Captura a tela da janela
     tela = capturar_tela_janela(janela_selecionada)
+
+    # Se 'seguir' for True, usa o rastreamento do modelo
+    if seguir:
+        results = model.track(tela, persist=True)
+    else:
+        results = model(tela)
+
+    # Processar os resultados do modelo
+    for result in results:
+        # Visualiza os resultados no quadro
+        tela = result.plot()
+
+        if seguir and deixar_rastro:
+            try:
+                # Obtém as caixas e IDs de rastreamento
+                boxes = result.boxes.xywh.cpu()
+                track_ids = result.boxes.id.int().cpu().tolist()
+
+                # Plotar as trilhas
+                for box, track_id in zip(boxes, track_ids):
+                    x, y, w, h = box
+                    track = track_history[track_id]
+                    track.append((float(x), float(y)))  # ponto central x, y
+                    if len(track) > 30:  # manter 90 rastros para 90 quadros
+                        track.pop(0)
+
+                    # Desenhar as linhas de rastreamento
+                    points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
+                    cv2.polylines(tela, [points], isClosed=False, color=(230, 0, 0), thickness=5)
+            except:
+                pass
 
     # Exibir a imagem capturada em uma janela OpenCV
     cv2.imshow("Captura da Janela", tela)
@@ -83,3 +123,4 @@ while True:
 
 # Libera a janela OpenCV
 cv2.destroyAllWindows()
+print("desligando")
